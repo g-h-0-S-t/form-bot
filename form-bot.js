@@ -1,1 +1,90 @@
-javascript: (() => {const a=1e3,b=window.location.href,c=d=>d[Math.floor(Math.random()*d.length)],d=(d,e)=>Math.floor(Math.random()*(e-d+1))+d,e=()=>{const d="ABCDEFGHIJKLMNOPQRSTUVWXYZ";return`${c(d)}.${c(d)}`},f=(d,g)=>{if(!d)return;const h=setInterval(()=>{try{if(!d.document||"complete"!==d.document.readyState)return;clearInterval(h);const i=d.document,j=i.querySelectorAll('[role="radiogroup"], [role="group"], [role="listitem"], input[type="text"], input[type="number"], textarea'),k=e(),l=d(18,45);j.forEach(m=>{const n=Array.from(m.querySelectorAll('[role="radio"], input[type="radio"]')),o=m.querySelector('input[type="text"], textarea'),p=m.querySelector('input[type="number"]');if(n.length){let q=c(n);m.textContent.toLowerCase().includes("gender")&&(q=c([...i.querySelectorAll('[aria-label="Male"], [aria-label="Female"]')])),q&&q.dispatchEvent(new MouseEvent("click",{bubbles:!0}))}else o?(o.value=m.textContent.toLowerCase().includes("name in initials")?k:`Sample ${g}`,o.dispatchEvent(new Event("input",{bubbles:!0}))):p&&(p.value=l,p.dispatchEvent(new Event("input",{bubbles:!0})))},setTimeout(()=>{const m=i.querySelector('[jsname="M2UYVd"]');m&&(m.dispatchEvent(new MouseEvent("click",{bubbles:!0})),setTimeout(()=>d.close(),1500))},2e3))}catch(m){clearInterval(h),d?.close()}},500)};(()=>{for(let d=0;d<a;d++)setTimeout(()=>{const e=window.open(b,"_blank",`width=800,height=900,left=${100+50*d},top=${100+50*d}`);setTimeout(()=>f(e,d+1),3e3)},1500*d)})();
+javascript: (() => {
+    const participants = 1000;
+    const url = window.location.href;
+
+    const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const getRandomInitials = () => {
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return $ {
+            getRandom(letters)
+        }.$ {
+            getRandom(letters)
+        };
+    };
+
+    const fillForm = (win, participantId) => {
+        if (!win) return;
+        const checkLoad = setInterval(() => {
+            try {
+                if (!win.document || win.document.readyState !== "complete") return;
+
+                clearInterval(checkLoad);
+                const doc = win.document;
+                const questions = doc.querySelectorAll('[role="radiogroup"], [role="group"], [role="listitem"], input[type="text"], input[type="number"], textarea');
+
+                let uniqueInitials = getRandomInitials();
+                let uniqueAge = getRandomNumber(18, 45);
+
+                questions.forEach((q) => {
+                    const radios = Array.from(q.querySelectorAll('[role="radio"], input[type="radio"]'));
+                    const textInput = q.querySelector('input[type="text"], textarea');
+                    const numberInput = q.querySelector('input[type="number"]');
+
+                    if (radios.length) {
+                        let selected = getRandom(radios);
+                        if (q.textContent.toLowerCase().includes("gender")) {
+                            const genderOptions = [...doc.querySelectorAll('[aria-label="Male"], [aria-label="Female"]')];
+                            selected = getRandom(genderOptions);
+                        }
+                        if (selected) selected.dispatchEvent(new MouseEvent("click", {
+                            bubbles: true
+                        }));
+                    } else if (textInput) {
+                        let value = Sample $ {
+                            participantId
+                        };
+                        if (q.textContent.toLowerCase().includes("name in initials")) value = uniqueInitials;
+                        textInput.value = value;
+                        textInput.dispatchEvent(new Event("input", {
+                            bubbles: true
+                        }));
+                    } else if (numberInput) {
+                        numberInput.value = uniqueAge;
+                        numberInput.dispatchEvent(new Event("input", {
+                            bubbles: true
+                        }));
+                    }
+                });
+
+                setTimeout(() => {
+                    const submitBtn = doc.querySelector('[jsname="M2UYVd"]');
+                    if (submitBtn) {
+                        submitBtn.dispatchEvent(new MouseEvent("click", {
+                            bubbles: true
+                        }));
+                        setTimeout(() => win.close(), 1500);
+                    }
+                }, 2000);
+            } catch (e) {
+                clearInterval(checkLoad);
+                win?.close();
+            }
+        }, 500);
+    };
+
+    const startParticipants = async () => {
+        for (let i = 0; i < participants; i++) {
+            setTimeout(() => {
+                const win = window.open(url, "_blank", width = 800, height = 900, left = $ {
+                    100 + i * 50
+                }, top = $ {
+                    100 + i * 50
+                });
+                setTimeout(() => fillForm(win, i + 1), 3000);
+            }, i * 1500);
+        }
+    };
+
+    startParticipants();
+})();
