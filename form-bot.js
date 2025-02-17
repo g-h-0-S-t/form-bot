@@ -1,90 +1,58 @@
 javascript: (() => {
-    const participants = 1000;
-    const url = window.location.href;
+    const a = 1000, 
+          b = window.location.href,
+          c = d => d[Math.floor(Math.random() * d.length)], 
+          d = (d, e) => Math.floor(Math.random() * (e - d + 1)) + d, 
+          e = () => { const d = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; return `${c(d)}.${c(d)}`; };
 
-    const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-    const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-    const getRandomInitials = () => {
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        return $ {
-            getRandom(letters)
-        }.$ {
-            getRandom(letters)
-        };
-    };
-
-    const fillForm = (win, participantId) => {
-        if (!win) return;
-        const checkLoad = setInterval(() => {
+    const f = (g, h) => {
+        if (!g) return;
+        const i = setInterval(() => {
             try {
-                if (!win.document || win.document.readyState !== "complete") return;
-
-                clearInterval(checkLoad);
-                const doc = win.document;
-                const questions = doc.querySelectorAll('[role="radiogroup"], [role="group"], [role="listitem"], input[type="text"], input[type="number"], textarea');
-
-                let uniqueInitials = getRandomInitials();
-                let uniqueAge = getRandomNumber(18, 45);
-
-                questions.forEach((q) => {
-                    const radios = Array.from(q.querySelectorAll('[role="radio"], input[type="radio"]'));
-                    const textInput = q.querySelector('input[type="text"], textarea');
-                    const numberInput = q.querySelector('input[type="number"]');
-
-                    if (radios.length) {
-                        let selected = getRandom(radios);
-                        if (q.textContent.toLowerCase().includes("gender")) {
-                            const genderOptions = [...doc.querySelectorAll('[aria-label="Male"], [aria-label="Female"]')];
-                            selected = getRandom(genderOptions);
+                if (!g.document || g.document.readyState !== "complete") return;
+                clearInterval(i);
+                const j = g.document,
+                      k = j.querySelectorAll('[role="radiogroup"], [role="group"], [role="listitem"], input[type="text"], input[type="number"], textarea'),
+                      l = e(), 
+                      m = d(18, 45);
+                
+                k.forEach(n => {
+                    const o = Array.from(n.querySelectorAll('[role="radio"], input[type="radio"]')), 
+                          p = n.querySelector('input[type="text"], textarea'), 
+                          q = n.querySelector('input[type="number"]');
+                    
+                    if (o.length) {
+                        let r = c(o);
+                        if (n.textContent.toLowerCase().includes("gender")) {
+                            const s = [...j.querySelectorAll('[aria-label="Male"], [aria-label="Female"]')];
+                            r = c(s);
                         }
-                        if (selected) selected.dispatchEvent(new MouseEvent("click", {
-                            bubbles: true
-                        }));
-                    } else if (textInput) {
-                        let value = Sample $ {
-                            participantId
-                        };
-                        if (q.textContent.toLowerCase().includes("name in initials")) value = uniqueInitials;
-                        textInput.value = value;
-                        textInput.dispatchEvent(new Event("input", {
-                            bubbles: true
-                        }));
-                    } else if (numberInput) {
-                        numberInput.value = uniqueAge;
-                        numberInput.dispatchEvent(new Event("input", {
-                            bubbles: true
-                        }));
+                        r && r.dispatchEvent(new MouseEvent("click", { bubbles: !0 }));
+                    } else if (p) {
+                        let t = `Sample ${h}`;
+                        n.textContent.toLowerCase().includes("name in initials") && (t = l);
+                        p.value = t;
+                        p.dispatchEvent(new Event("input", { bubbles: !0 }));
+                    } else if (q) {
+                        q.value = m;
+                        q.dispatchEvent(new Event("input", { bubbles: !0 }));
                     }
                 });
 
                 setTimeout(() => {
-                    const submitBtn = doc.querySelector('[jsname="M2UYVd"]');
-                    if (submitBtn) {
-                        submitBtn.dispatchEvent(new MouseEvent("click", {
-                            bubbles: true
-                        }));
-                        setTimeout(() => win.close(), 1500);
-                    }
+                    const u = j.querySelector('[jsname="M2UYVd"]');
+                    u && (u.dispatchEvent(new MouseEvent("click", { bubbles: !0 })), setTimeout(() => g.close(), 1500));
                 }, 2000);
-            } catch (e) {
-                clearInterval(checkLoad);
-                win?.close();
+            } catch (v) {
+                clearInterval(i), g?.close();
             }
         }, 500);
     };
 
-    const startParticipants = async () => {
-        for (let i = 0; i < participants; i++) {
-            setTimeout(() => {
-                const win = window.open(url, "_blank", width = 800, height = 900, left = $ {
-                    100 + i * 50
-                }, top = $ {
-                    100 + i * 50
-                });
-                setTimeout(() => fillForm(win, i + 1), 3000);
-            }, i * 1500);
-        }
-    };
-
-    startParticipants();
+    (() => {
+        for (let g = 0; g < a; g++) setTimeout(() => {
+            const h = window.open(b, "_blank", `width=800,height=900,left=${100 + 50 * g},top=${100 + 50 * g}`);
+            setTimeout(() => f(h, g + 1), 3000);
+        }, 1500 * g);
+    })();
 })();
