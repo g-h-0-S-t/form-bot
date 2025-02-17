@@ -1,114 +1,72 @@
 javascript: (() => {
-  let wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    console.log("🔄 Starting Google Form Autofill...");
 
-  let randomAnswer = (options, history, label) => {
-    if (!history[label]) history[label] = null;
-    let filteredOptions = options.filter((option) => option !== history[label]);
-    let answer =
-      filteredOptions[Math.floor(Math.random() * filteredOptions.length)];
-    history[label] = answer;
-    return answer;
-  };
+    const clickElement = (el) => {
+        if (el) el.click();
+    };
 
-  let generateRandomInitials = () => {
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    return (
-      letters.charAt(Math.floor(Math.random() * 26)) +
-      "." +
-      letters.charAt(Math.floor(Math.random() * 26))
-    );
-  };
+    const getRandomInitials = () => {
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return `${letters[Math.floor(Math.random() * 26)]}.${letters[Math.floor(Math.random() * 26)]}`;
+    };
 
-  let fillTextInput = (label) => {
-    let inputField = document.querySelector(
-      'input[type="text"], input[aria-labelledby*="i"]'
-    );
-    if (inputField) {
-      let textValue = label === "Initials" ? generateRandomInitials() : "Test";
-      inputField.value = textValue;
-      inputField.dispatchEvent(new Event("input", { bubbles: true }));
-      console.log(`Filled "${label}": ${textValue}`);
-      return true;
-    } else {
-      console.error(`Text field for "${label}" not found.`);
-      return false;
-    }
-  };
+    const getRandomGenderOption = (options) => {
+        const validOptions = options.filter(el => {
+            const label = el.getAttribute("aria-label")?.toLowerCase();
+            return label === "male" || label === "female";
+        });
 
-  let selectOption = async (options, label, history) => {
-    let allOptions = [...document.querySelectorAll('div[role="radio"]')];
+        return validOptions.length ? validOptions[Math.floor(Math.random() * validOptions.length)] : null;
+    };
 
-    let randomizedAnswer = randomAnswer(options, history, label);
-    let optionElement = allOptions.find(
-      (el) =>
-        el.getAttribute("aria-label") &&
-        el.getAttribute("aria-label").includes(randomizedAnswer)
-    );
+    const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-    if (optionElement) {
-      optionElement.click();
-      console.log(`Answered "${label}": ${randomizedAnswer}`);
-      return true;
-    } else {
-      console.warn(`Retrying selection for "${label}"...`);
-      await wait(500);
-      let retryOption = allOptions.find(
-        (el) =>
-          el.getAttribute("aria-label") &&
-          el.getAttribute("aria-label").includes(randomizedAnswer)
-      );
-      if (retryOption) retryOption.click();
-      return !!retryOption;
-    }
-  };
+    const questions = document.querySelectorAll('[role="radiogroup"], [role="group"], [role="listitem"]');
 
-  let fillRadioGroup = async (label, scale) => {
-    let scaleGroups = Array.from(document.querySelectorAll('div[role="radiogroup"]'));
-    for (let group of scaleGroups) {
-      let randomizedAnswer = randomAnswer(scale, {}, label);
-      let optionElement = group.querySelector(
-        `div[aria-label="${randomizedAnswer}"]`
-      );
-      if (optionElement) {
-        optionElement.click();
-        console.log(`Answered "${label}": ${randomizedAnswer}`);
-      }
-    }
-  };
+    questions.forEach((question) => {
+        const options = Array.from(question.querySelectorAll('[role="radio"], input[type="radio"]'));
+        const textInput = question.querySelector('input[type="text"], textarea');
+        const numberInput = question.querySelector('input[type="number"]');
 
-  (async () => {
-    console.log("Starting form automation...");
-    let answerHistory = {};
+        if (options.length) {
+            let selectedOption = null;
 
-    let formFields = document.querySelectorAll(".Qr7Oae");
-    
-    for (let field of formFields) {
-      let labelElement = field.querySelector(".M7eMe");
-      if (!labelElement) continue;
+            if (question.textContent.toLowerCase().includes("gender")) {
+                selectedOption = getRandomGenderOption(options);
+            } else {
+                selectedOption = options[Math.floor(Math.random() * options.length)];
+            }
 
-      let label = labelElement.innerText.trim();
-      let options = [...field.querySelectorAll('div[role="radio"]')].map(el => el.getAttribute("aria-label"));
+            if (selectedOption) {
+                console.log(`✅ Selecting: ${selectedOption.getAttribute("aria-label") || selectedOption.value}`);
+                clickElement(selectedOption);
+            }
+        } else if (textInput) {
+            let value = "Sample Answer";
 
-      if (label.includes("Name in initials") || label.includes("Initials")) {
-        fillTextInput(label);
-      } else if (options.length > 0) {
-        await selectOption(options, label, answerHistory);
-      } else {
-        let radioGroups = field.querySelectorAll('div[role="radiogroup"]');
-        if (radioGroups.length > 0) {
-          await fillRadioGroup(label, ["1", "2", "3", "4", "5"]);
+            if (question.textContent.toLowerCase().includes("name in initials")) {
+                value = getRandomInitials();
+            }
+
+            textInput.value = value;
+            textInput.dispatchEvent(new Event("input", { bubbles: true }));
+            console.log(`✅ Filled text input: ${value}`);
+        } else if (numberInput) {
+            numberInput.value = getRandomNumber(18, 45);
+            numberInput.dispatchEvent(new Event("input", { bubbles: true }));
+            console.log(`✅ Filled number input (Age): ${numberInput.value}`);
         }
-      }
-    }
+    });
 
-    let submitButton = document.querySelector('[aria-label="Submit"], button[type="submit"]');
-    if (submitButton && !submitButton.disabled) {
-      console.log("Form filled successfully! Clicking the Submit button...");
-      setTimeout(() => {
-        submitButton.click();
-      }, 500);
-    } else {
-      console.error("Submit button not found or not enabled. Please verify the DOM structure.");
-    }
-  })();
+    console.log("✅ Form autofill completed!");
+
+    setTimeout(() => {
+        const submitButton = document.querySelector('[jsname="M2UYVd"]');
+        if (submitButton) {
+            console.log("🚀 Submitting the form...");
+            clickElement(submitButton);
+        } else {
+            console.log("⚠️ Submit button not found!");
+        }
+    }, 1500);
 })();
