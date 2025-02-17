@@ -1,18 +1,1 @@
-javascript: (() => {
-    const clickEl = el => el && el.click(), getRandInit = () => {const l = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; return `${l[Math.floor(Math.random() * 26)]}.${l[Math.floor(Math.random() * 26)]}`}, getRandGender = opts => {const v = opts.filter(el => ["male", "female"].includes(el.getAttribute("aria-label")?.toLowerCase())); return v.length ? v[Math.floor(Math.random() * v.length)] : null}, getRandNum = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-    document.querySelectorAll('[role="radiogroup"], [role="group"], [role="listitem"]').forEach(q => {
-        const opts = Array.from(q.querySelectorAll('[role="radio"], input[type="radio"]')), txt = q.querySelector('input[type="text"], textarea'), num = q.querySelector('input[type="number"]');
-        if (opts.length) {
-            let sel = q.textContent.toLowerCase().includes("gender") ? getRandGender(opts) : opts[Math.floor(Math.random() * opts.length)];
-            sel && clickEl(sel);
-        } else if (txt) {
-            txt.value = q.textContent.toLowerCase().includes("name in initials") ? getRandInit() : "Sample Answer", txt.dispatchEvent(new Event("input", { bubbles: true }));
-        } else if (num) {
-            num.value = getRandNum(18, 45), num.dispatchEvent(new Event("input", { bubbles: true }));
-        }
-    });
-    setTimeout(() => {
-        const sub = document.querySelector('[jsname="M2UYVd"]');
-        sub && clickEl(sub);
-    }, 0);
-})();
+javascript: (() => {const a=1e3,b=window.location.href,c=d=>d[Math.floor(Math.random()*d.length)],d=(d,e)=>Math.floor(Math.random()*(e-d+1))+d,e=()=>{const d="ABCDEFGHIJKLMNOPQRSTUVWXYZ";return`${c(d)}.${c(d)}`},f=(d,g)=>{if(!d)return;const h=setInterval(()=>{try{if(!d.document||"complete"!==d.document.readyState)return;clearInterval(h);const i=d.document,j=i.querySelectorAll('[role="radiogroup"], [role="group"], [role="listitem"], input[type="text"], input[type="number"], textarea'),k=e(),l=d(18,45);j.forEach(m=>{const n=Array.from(m.querySelectorAll('[role="radio"], input[type="radio"]')),o=m.querySelector('input[type="text"], textarea'),p=m.querySelector('input[type="number"]');if(n.length){let q=c(n);m.textContent.toLowerCase().includes("gender")&&(q=c([...i.querySelectorAll('[aria-label="Male"], [aria-label="Female"]')])),q&&q.dispatchEvent(new MouseEvent("click",{bubbles:!0}))}else o?(o.value=m.textContent.toLowerCase().includes("name in initials")?k:`Sample ${g}`,o.dispatchEvent(new Event("input",{bubbles:!0}))):p&&(p.value=l,p.dispatchEvent(new Event("input",{bubbles:!0})))},setTimeout(()=>{const m=i.querySelector('[jsname="M2UYVd"]');m&&(m.dispatchEvent(new MouseEvent("click",{bubbles:!0})),setTimeout(()=>d.close(),1500))},2e3))}catch(m){clearInterval(h),d?.close()}},500)};(()=>{for(let d=0;d<a;d++)setTimeout(()=>{const e=window.open(b,"_blank",`width=800,height=900,left=${100+50*d},top=${100+50*d}`);setTimeout(()=>f(e,d+1),3e3)},1500*d)})();
